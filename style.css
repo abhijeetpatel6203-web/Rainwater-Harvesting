@@ -892,6 +892,7 @@ input, select, button { font-family: inherit; }
   transition: all var(--transition);
   outline: none;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 .form-group select option { background: var(--green-900); color: white; }
