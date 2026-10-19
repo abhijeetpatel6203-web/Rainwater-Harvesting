@@ -1,174 +1,215 @@
-# 💧 RainWise — Rainwater Harvesting Monitor
+<div align="center">
 
-> A free, open-source web app that uses live weather data to help you design and optimise a rainwater harvesting system for your home.
+# 🌧️ RainWise
+### Rainwater Harvesting Monitor & Decision-Support System
 
-**Live Demo:** _[Add GitHub Pages URL here once deployed]_
+Rainwater harvesting monitor with live rainfall by location, dynamic tank simulation, savings estimate, and yearly harvest forecast.
 
----
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=flat-square&logo=chartdotjs&logoColor=white)](https://www.chartjs.org/)
+[![Hosted on GitHub Pages](https://img.shields.io/badge/Hosted-GitHub_Pages-222222?style=flat-square&logo=github)](https://abhijeetpatel6203-web.github.io/Rainwater-Harvesting/)
 
-## 🌍 The Problem
+**Live Demo:** [abhijeetpatel6203-web.github.io/Rainwater-Harvesting](https://abhijeetpatel6203-web.github.io/Rainwater-Harvesting/)
 
-India receives over **4,000 billion m³** of rainfall annually — yet 600 million people face water stress, and 21 major cities are projected to run out of groundwater by 2030. Most monsoon rain runs off rooftops and roads into stormwater drains, wasted. Rainwater harvesting (RWH) captures this free resource at the source, reducing household water bills, recharging depleting aquifers, and preventing urban flooding.
-
----
-
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| 📍 **City Search** | Geocoding via Open-Meteo — search any city worldwide, pick from dropdown |
-| 🌧️ **Live Rainfall** | Fetches past 30 days + 7-day forecast from Open-Meteo (no API key needed) |
-| 🧮 **Calculator** | Day-by-day tank simulation with overflow tracking |
-| 📊 **37-Day Dashboard** | 6 summary cards, rainfall bar chart, tank level line chart |
-| 💡 **Recommendations** | Auto-detects overflow, dry tank, and suggests improvements |
-| 📅 **Annual Estimate** | 365-day archive data → yearly harvest, monthly bar chart, optimal tank size |
-| 🪣 **Tank Optimiser** | Shows the "elbow" where adding more capacity stops being worthwhile |
-| 🌙 **Dark Mode** | Follows system preference; manual override saved to localStorage |
-| ⬇️ **CSV Export** | Download full daily simulation as a spreadsheet |
-| 💾 **Auto-Save** | Inputs and location persist across browser sessions |
-| 📱 **Responsive** | Works at 375 px width; tested on mobile Chrome and Safari |
+</div>
 
 ---
 
-## 🧮 How the Calculator Works
-
-### Core Formula
-
-```
-Harvest (L) = max(0, Rainfall_mm − First_Flush_mm)
-              × Roof_Area_m²
-              × Runoff_Coefficient
-```
-
-**Why this works:**  
-1 mm of rain falling on 1 m² of surface = exactly **1 litre** (0.001 m depth × 1 m² = 0.001 m³ = 1 L).
-
-| Parameter | Meaning | Typical value |
-|-----------|---------|---------------|
-| **Rainfall (mm)** | Daily precipitation from Open-Meteo | varies |
-| **First Flush (mm)** | Dirty initial rain diverted away | 1–2 mm |
-| **Roof Area (m²)** | Catchment surface | 50–300 m² |
-| **Runoff Coefficient** | Fraction that reaches the tank | 0.80–0.90 |
-
-### Runoff Coefficients
-
-| Roof Type | Coefficient |
-|-----------|-------------|
-| Concrete / RCC | 0.85 |
-| Clay Tiles | 0.80 |
-| Metal / GI Sheet | 0.90 |
-| Asbestos Sheet | 0.80 |
-
-### Tank Simulation (day-by-day)
-
-```
-pre_fill  = tank + harvest
-overflow  = max(0, pre_fill − tank_capacity)   # water lost when full
-tank      = min(tank_capacity, pre_fill)
-tank      = max(0, tank − daily_use)            # can't go negative
-```
-
-The simulation runs over all 37 days (or 365 for annual), tracking harvest, tank level, and overflow every day.
+## 📑 Contents
+- [Abstract](#abstract)
+- [Problem Statement](#problem-statement)
+- [Objectives](#objectives)
+- [Features](#features)
+- [System Overview](#system-overview)
+- [Tech Stack](#tech-stack)
+- [How the Harvest is Calculated](#how-the-harvest-is-calculated)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Deployment](#deployment)
+- [Limitations](#limitations)
+- [Future Scope](#future-scope)
+- [Environmental Relevance](#environmental-relevance)
+- [References](#references)
+- [Academic Details](#academic-details)
 
 ---
 
-## 🏗️ Architecture
+## Abstract
+**RainWise** is a web application that shows how much rainwater a building can collect. A user searches for a city, enters their roof area, roof type, tank size, and daily water use, and the app fetches recent and forecast rainfall for that location. It then works out the litres harvested, how full the tank gets, how many days the stored water lasts, and the money saved on the water bill. The project was built for the Environmental Studies course to show how free weather data and a simple calculator can make rainwater harvesting easier to plan and to justify.
+
+---
+
+## Problem Statement
+Many cities rely on groundwater and tanker supply, and water tables keep falling. At the same time, rain that lands on roofs and paved ground runs into drains. That wastes the water and adds to urban flooding. Rainwater harvesting can recharge groundwater and reduce the need for piped water, but most households and campuses cannot tell how much rain their roof would actually collect, what tank size they need, or whether the investment pays off. Without those numbers, few people install a system.
+
+---
+
+## Objectives
+- Show how much water a roof can collect from real rainfall at the user's own location.
+- Let users enter their own roof area, roof type, tank size, and water use.
+- Simulate the tank day by day, including overflow and days without water.
+- Estimate the yearly harvest and the savings on the water bill.
+- Explain how rainwater harvesting works, which system types exist, and which Indian schemes support it.
+- Run entirely in the browser with no account, no backend, and no API key.
+
+---
+
+## Features
+- **City Search:** Look up any city and get its coordinates through the Open-Meteo Geocoding API. Default city: **Bengaluru**.
+- **Live Rainfall:** Daily rainfall for the past 30 days and the next 7 days, shown in a chart with past and forecast days marked differently.
+- **Harvesting Calculator:** Inputs are roof area, roof type, tank capacity, daily household use, first-flush loss, and water tariff.
+- **Tank Simulation:** A day-by-day model of the tank level, tracking storage, overflow, and shortfall.
+- **Dashboard:** Summary cards for total litres harvested, current tank level, days of supply left, overflow lost, and money saved.
+- **Recommendations:** A short message that suggests a larger tank or a recharge pit when overflow is high.
+- **Yearly Estimate:** Uses 365 days of rainfall data to estimate annual and monthly harvest.
+- **Learning Sections:** Explains how rainwater harvesting works, the main system types (rooftop, surface runoff, groundwater recharge, check dams), national impact figures, government schemes, and an FAQ.
+- **Responsive Layout:** Optimized for mobile phones ($\ge 375\text{px}$), tablets, and desktops.
+
+---
+
+## System Overview
+The app has no backend of its own. The browser communicates directly with public Open-Meteo APIs:
+1. **Input:** The user enters a city, which the Geocoding API converts to latitude and longitude, plus roof area, roof type, tank capacity, and daily water use.
+2. **Processing:** The coordinates are sent to the Open-Meteo Forecast and Archive APIs, which return daily rainfall in millimetres. The calculator turns each day's rainfall into litres and simulates the tank day-by-day.
+3. **Output:** The page renders the summary metric cards, the rainfall and tank level charts, the yearly estimate, and engineering recommendations.
 
 ```mermaid
 flowchart LR
-    A([User Inputs\nCity · Roof · Tank · Usage]) --> B
-    B[Open-Meteo\nGeocoding API] --> C
-    C[Open-Meteo\nForecast / Archive API] --> D
-    D[js/calculator.js\nPure Functions] --> E
-    E[Dashboard\nCharts · Cards · Table]
-
-    style A fill:#e0f2fe,stroke:#0ea5e9
-    style B fill:#dcfce7,stroke:#22c55e
-    style C fill:#dcfce7,stroke:#22c55e
-    style D fill:#fef9c3,stroke:#ca8a04
-    style E fill:#ede9fe,stroke:#7c3aed
+    A["User Inputs<br/>(City, Roof, Tank, Usage)"] --> B["Open-Meteo<br/>Geocoding API"]
+    B --> C["Open-Meteo<br/>Forecast & Archive API"]
+    C --> D["Calculator<br/>(Harvest & Tank Simulation)"]
+    D --> E["Dashboard<br/>(Cards, Charts, Recommendation)"]
 ```
 
 ---
 
-## 🛠️ Technology Stack
+## Tech Stack
 
-| Technology | Purpose |
-|------------|---------|
-| **HTML5** | Semantic structure, ARIA accessibility |
-| **CSS3** | Custom properties, responsive grid, light/dark themes |
-| **Vanilla JavaScript (ES2020)** | All app logic, no frameworks |
-| **[Open-Meteo API](https://open-meteo.com)** | Free weather data — no API key, no sign-up |
-| **[Chart.js 4](https://www.chartjs.org)** | Interactive bar & line charts (CDN) |
-| **localStorage** | Persists user inputs and location between sessions |
-
----
-
-## 📁 File Structure
-
-```
-Rainwater Harvesting/
-├── index.html          # Full page structure with tabs, form, results
-├── style.css           # Design system: tokens, components, responsive
-├── app.js              # App logic: API calls, charts, rendering, CSV
-├── js/
-│   └── calculator.js   # Pure functions: dailyHarvest, simulateTank,
-│                       #   monthlyHarvestTotals, findOptimalTankSize
-├── hero-bg.jpg         # Original landing page hero image
-└── README.md           # This file
-```
+| Layer | Technology |
+| :--- | :--- |
+| **Structure & Styling** | HTML5, Vanilla CSS3 (Custom Design System, Mobile-First) |
+| **Logic** | Vanilla JavaScript (ES6+, No Frameworks) |
+| **Calculation Engine** | `calculator.js` (Pure mathematical functions) |
+| **Charts** | Chart.js (via CDN) |
+| **Geocoding** | Open-Meteo Geocoding API |
+| **Rainfall Data** | Open-Meteo Forecast API (`precipitation_sum`, past 30 days + 7-day forecast) |
+| **Hosting** | GitHub Pages |
 
 ---
 
-## 🚀 Running Locally
+## How the Harvest is Calculated
+One millimetre of rain falling on one square metre of surface gives one litre of water ($1\text{ mm} \times 1\text{ m}^2 = 10^{-3}\text{ m} \times 1\text{ m}^2 = 10^{-3}\text{ m}^3 = 1\text{ L}$).
 
-No build step required — just open the file in a browser.
+For each day, the app calculates:
+$$\text{harvest (litres)} = \max(0, \text{rainfall\_mm} - \text{first\_flush\_mm}) \times \text{roof\_area\_m}^2 \times \text{runoff\_coefficient}$$
 
+- **First-Flush:** The initial portion of a rain event washes dust and debris off the catchment surface and is diverted away from the tank. The default is $1\text{ mm}$.
+- **Runoff Coefficient:** Represents the proportion of rainfall that actually reaches the storage tank, based on roof material:
+
+| Roof Type | Runoff Coefficient |
+| :--- | :---: |
+| **Concrete / RCC** | `0.85` |
+| **Clay / Ceramic Tiles** | `0.80` |
+| **Metal / GI Sheet** | `0.90` |
+
+> **Example:** A $100\text{ m}^2$ concrete roof in a $50\text{ mm}$ rain with a $1\text{ mm}$ first flush collects:  
+> $$(50 - 1) \times 100 \times 0.85 = 4,165\text{ litres}$$
+
+### Tank Simulation Model
+The tank is simulated day-by-day:
+- $\text{tank}_{\text{harvest}} = \min(\text{capacity}, \text{tank} + \text{harvest})$
+- $\text{overflow} = \max(0, \text{tank} + \text{harvest} - \text{capacity})$
+- $\text{tank}_{\text{end}} = \max(0, \text{tank}_{\text{harvest}} - \text{daily\_use})$ *(never below 0)*
+
+**Money Saved:** Litres of stored water used, converted to kilolitres ($\text{kL} = 1,000\text{ L}$) and multiplied by the local water tariff in rupees per kL ($₹/\text{kL}$).
+
+---
+
+## Project Structure
+
+```text
+Rainwater-Harvesting/
+├── index.html         # Page structure and all sections (Hero, How It Works, Systems, Calculator, Live Monitor, Stats, FAQ)
+├── style.css          # Design system, layout, theming, and responsive rules (>= 375px)
+├── script.js           # UI interactions, Open-Meteo API integration, Chart.js rendering
+├── calculator.js      # Pure functions for daily harvest, tank simulation, and recommendations
+├── hero-bg.jpg        # Hero section background asset
+└── README.md          # Comprehensive project documentation
+```
+
+---
+
+## Getting Started
+
+### Requirements
+- Any modern web browser (Chrome, Firefox, Safari, Edge)
+- Active internet connection (rainfall and geocoding data are fetched live)
+- No API key, installation, or build step required
+
+### Run Locally
 ```bash
 # Clone the repository
 git clone https://github.com/abhijeetpatel6203-web/Rainwater-Harvesting.git
 cd Rainwater-Harvesting
 
-# Option 1: Open directly
-open index.html
-
-# Option 2: Serve locally (recommended — avoids CORS on some browsers)
+# Start a local static server
 python3 -m http.server 8000
-# then visit http://localhost:8000
 ```
-
-> **Note:** The Open-Meteo APIs are called directly from the browser. No backend server or API keys are needed.
+Open [http://localhost:8000](http://localhost:8000/) in your browser.
 
 ---
 
-## 🌐 Deploying to GitHub Pages
-
-1. Push the repo to GitHub (the `main` branch)
-2. Go to **Settings → Pages**
-3. Set source to **Deploy from a branch → main → / (root)**
-4. GitHub Pages will publish the site at  
+## Deployment
+The site is hosted automatically using GitHub Pages:
+1. Open the repository on GitHub and go to **Settings** $\rightarrow$ **Pages**.
+2. Under **Build and deployment**, choose **Deploy from a branch**.
+3. Select branch: `main` and folder: `/ (root)`, then click **Save**.
+4. The site is published live at:  
    `https://abhijeetpatel6203-web.github.io/Rainwater-Harvesting/`
 
-Update the **Live Demo** link at the top of this README once deployed.
+---
+
+## Limitations
+- **Data Source:** Rainfall comes from Open-Meteo, which provides numerical model-based data at grid resolution. Values may differ slightly from a physical rain gauge on a specific rooftop.
+- **Forecast Uncertainty:** The next 7 days represent meteorological forecast projections and can change with incoming weather fronts.
+- **Simplified Model:** Uses fixed runoff coefficients and first-flush loss. Does not model pipe friction, tank evaporation, or filtration losses.
+- **Estimates Only:** Savings depend on municipal or private tanker tariffs entered by the user.
+- **Reference Content:** Impact numbers and scheme descriptions are educational summaries.
 
 ---
 
-## 📡 API Reference
-
-| API | Endpoint | Used for |
-|-----|----------|----------|
-| Geocoding | `https://geocoding-api.open-meteo.com/v1/search?name=CITY` | City → lat/lon |
-| Forecast | `https://api.open-meteo.com/v1/forecast?...&past_days=30&forecast_days=7` | 37-day simulation |
-| Archive | `https://archive-api.open-meteo.com/v1/archive?...&start_date=&end_date=` | Annual estimate |
-
-All APIs are **free**, require **no API key**, and have generous rate limits for personal use.
+## Future Scope
+- Connect low-cost IoT rain gauges and ultrasonic tank level sensors (e.g. ESP32 + HC-SR04).
+- Add regional GIS map layers showing rainfall and groundwater depletion across Indian districts.
+- Include water quality testing guidelines for potable vs. non-potable domestic use.
+- Add an investment payback calculator (capital cost of tanks, piping, filters vs. tanker savings).
+- Push alerts when severe rainfall is forecast to prepare rain gutters.
 
 ---
 
-## 📜 Licence
-
-MIT — free to use, modify, and distribute.
+## Environmental Relevance
+Harvesting rainwater reduces stress on municipal and tanker water supplies, lowers energy consumed in deep groundwater pumping and water transportation, and prevents urban stormwater runoff from overwhelming storm drains. By giving communities concrete calculations on the litres their roofs can capture, RainWise makes sustainable water planning tangible and actionable using open, free environmental data.
 
 ---
 
-*Built for a water-secure India 🇮🇳 · Data from [Open-Meteo](https://open-meteo.com)*
+## References
+- Open-Meteo, [Weather Forecast API Documentation](https://open-meteo.com/en/docs)
+- Open-Meteo, [Historical Weather API Documentation](https://open-meteo.com/en/docs/historical-weather-api)
+- Open-Meteo, [Geocoding API Documentation](https://open-meteo.com/en/docs/geocoding-api)
+- Chart.js, [Official Documentation](https://www.chartjs.org/docs/latest/)
+- Ministry of Jal Shakti, Government of India, [jalshakti-dowr.gov.in](https://jalshakti-dowr.gov.in/)
+- Central Ground Water Board (CGWB), [cgwb.gov.in](http://cgwb.gov.in/)
+
+---
+
+## Academic Details
+
+| Item | Detail |
+| :--- | :--- |
+| **Project** | **RainWise: Rainwater Harvesting Monitoring & Decision-Support System** |
+| **Course** | Environmental Studies (EVS) |
+| **Semester** | V, CSE |
+| **Institution** | RV Institute of Technology and Management |
+| **Author** | Abhijeet Anand ([@abhijeetpatel6203-web](https://github.com/abhijeetpatel6203-web)) |
